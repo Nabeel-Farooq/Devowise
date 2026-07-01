@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Sparkles, Layers, Zap, Cpu, PenTool, Globe, Linkedin, Plus, Clock, Handshake, Rocket, Menu, X } from "lucide-react";
 import { useState } from "react";
-import devowiseLogo from "@/assets/devowise-logo.png.asset.json";
+import devowiseLogo from "@/assets/devowise-logo.png";
 
 const CALENDLY_URL = "https://calendly.com/nabeelfarooq1515/30min";
 
@@ -191,7 +191,7 @@ function Nav() {
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
         <a href="#top" className="flex h-10 items-center gap-2 font-semibold tracking-tight shrink-0">
-          <img src={devowiseLogo.url} alt="Devowise" className="h-5 max-h-5 w-auto max-w-[112px] object-contain logo-animated" />
+          <img src={devowiseLogo} alt="Devowise" className="h-5 max-h-5 w-auto max-w-[112px] object-contain logo-animated" />
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
           <a href="#work" className="hover:text-foreground transition-colors">Work</a>
@@ -643,7 +643,7 @@ function Footer() {
     <footer className="border-t border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <img src={devowiseLogo.url} alt="Devowise" className="h-4 max-h-4 w-auto max-w-[96px] object-contain logo-animated" />
+          <img src={devowiseLogo} alt="Devowise" className="h-4 max-h-4 w-auto max-w-[96px] object-contain logo-animated" />
           <span>© {new Date().getFullYear()} Devowise. All rights reserved.</span>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
