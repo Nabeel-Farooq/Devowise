@@ -629,8 +629,8 @@ function _cta() {
           <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:bg-primary-glow transition-colors">
             Book a Call <ArrowRight className="h-4 w-4" />
           </a>
-          <a href="mailto:hello@devowise.com" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/40 px-5 py-3 text-sm font-medium hover:bg-card transition-colors">
-            hello@devowise.com
+          <a href="mailto:contact@devowise.com" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/40 px-5 py-3 text-sm font-medium hover:bg-card transition-colors">
+            contact@devowise.com
           </a>
         </div>
       </div>
