@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createSupabasePublicClient } from "@/lib/supabase-public.server";
 
 export const Route = createFileRoute("/p/$id")({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: row, error } = await supabaseAdmin
+        const supabase = createSupabasePublicClient();
+        const { data: row, error } = await supabase
           .from("pdf_files" as never)
           .select("id, name")
           .eq("id", params.id)
@@ -19,12 +20,9 @@ export const Route = createFileRoute("/p/$id")({
         const { name } = row as { id: string; name: string };
         const { resolveCountry } = await import("@/lib/geo.server");
         const country = await resolveCountry(request);
-        await Promise.all([
-          supabaseAdmin.rpc("increment_pdf_open" as never, { _id: params.id } as never),
-          supabaseAdmin
-            .from("pdf_events" as never)
-            .insert({ pdf_id: params.id, event_type: "open", country } as never),
-        ]);
+        await supabase
+          .from("pdf_events" as never)
+          .insert({ pdf_id: params.id, event_type: "open", country } as never);
         const escape = (s: string) =>
           s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
         const safeName = escape(name);

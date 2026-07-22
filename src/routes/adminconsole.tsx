@@ -120,11 +120,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [origin, setOrigin] = useState("");
-
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
+  // Always build shareable links against the public production domain,
+  // regardless of which host the admin panel is being used on.
+  const origin = "https://www.devowise.com";
 
   async function refresh() {
     setLoading(true);

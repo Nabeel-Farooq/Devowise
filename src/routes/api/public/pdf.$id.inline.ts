@@ -1,30 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createSupabasePublicClient } from "@/lib/supabase-public.server";
 
 export const Route = createFileRoute("/api/public/pdf/$id/inline")({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: row, error } = await supabaseAdmin
+        const supabase = createSupabasePublicClient();
+        const { data: row, error } = await supabase
           .from("pdf_files" as never)
           .select("storage_path")
           .eq("id", params.id)
           .maybeSingle();
         if (error || !row) return new Response("Not found", { status: 404 });
         const path = (row as { storage_path: string }).storage_path;
-        const { data: signed, error: signErr } = await supabaseAdmin.storage
+        const { data: file, error: dlErr } = await supabase.storage
           .from("portfolio-pdfs")
-          .createSignedUrl(path, 60 * 60);
-        if (signErr || !signed) return new Response("Signing failed", { status: 500 });
+          .download(path);
+        if (dlErr || !file) return new Response("File not found", { status: 404 });
         const { resolveCountry } = await import("@/lib/geo.server");
         const country = await resolveCountry(request);
-        await Promise.all([
-          supabaseAdmin.rpc("increment_pdf_view" as never, { _id: params.id } as never),
-          supabaseAdmin
-            .from("pdf_events" as never)
-            .insert({ pdf_id: params.id, event_type: "view", country } as never),
-        ]);
-        return Response.redirect(signed.signedUrl, 302);
+        await supabase
+          .from("pdf_events" as never)
+          .insert({ pdf_id: params.id, event_type: "view", country } as never);
+        return new Response(file.stream(), {
+          headers: {
+            "content-type": "application/pdf",
+            "content-disposition": "inline",
+            "cache-control": "private, max-age=300",
+          },
+        });
       },
     },
   },
