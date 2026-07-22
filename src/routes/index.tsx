@@ -34,63 +34,63 @@ const work = [
     outcome: "AI-enhanced travel & lifestyle blog with editorial-grade UX.",
     tags: ["AI", "Web"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/x5xlzdf4aw0pvv6x6jm2.avif",
-    href: "https://contra.com/p/bgLrobWF-mind-mesh-ai-enhanced-travel-and-lifestyle-blog",
+    slug: "mindmesh-ai-travel-blog",
   },
   {
     name: "JobFit AI",
     outcome: "AI-powered recruitment platform matching talent to roles at scale.",
     tags: ["AI", "SaaS"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/fhk5off99wsy4rtg6vms.avif",
-    href: "https://contra.com/p/gqYRLqO3-job-fit-ai-ai-powered-recruitment-platform",
+    slug: "jobfit-ai-recruitment",
   },
   {
     name: "BatchQ",
     outcome: "Real-time AI data pipeline automation for modern engineering teams.",
     tags: ["AI", "Data"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/pdzoosftnkoukdxpv2vw.avif",
-    href: "https://contra.com/p/MP2EZF7q-batch-q-real-time-ai-data-pipeline-automation",
+    slug: "batchq-ai-data-pipeline",
   },
   {
     name: "PrismPay",
     outcome: "Designing a seamless payment interface for a next-gen fintech.",
     tags: ["Fintech", "Product"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/dlrvk0otsfjri9rl4dge.avif",
-    href: "https://contra.com/p/UlvsYXe3-prism-pay-designing-a-seamless-payment-interface",
+    slug: "prismpay-payments-interface",
   },
   {
     name: "Clay",
     outcome: "Modern real estate website development with a refined design system.",
     tags: ["Web", "Design"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/jlp1znzefqnqliegbqp6.avif",
-    href: "https://contra.com/p/UkbUqLqP-clay-modern-real-estate-website-development",
+    slug: "clay-real-estate",
   },
   {
     name: "VELTO",
     outcome: "Fashion e-commerce landing built to convert premium shoppers.",
     tags: ["E-commerce", "Web"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/mzrsbth59bt0gxajcgpz.avif",
-    href: "https://contra.com/p/BREErcUb-velto-fashion-e-commerce-landing-page-design",
+    slug: "velto-fashion-ecommerce",
   },
   {
     name: "Archon",
     outcome: "Website development for a category-defining B2B brand.",
     tags: ["Web", "Framer"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/znlna13le5kwwwiinkz2.avif",
-    href: "https://contra.com/p/7W3lbNXW-archon-website-development",
+    slug: "archon-website",
   },
   {
     name: "GoPlay",
     outcome: "Outdoor sports booking application, mobile-first product design.",
     tags: ["Mobile", "Product"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/mqv7xfz9jzeln20n2jnm.avif",
-    href: "https://contra.com/p/P7boRPNb-outdoor-sports-booking-application-go-play",
+    slug: "goplay-sports-booking",
   },
   {
     name: "NOIREVE",
     outcome: "French luxury beauty & skincare brand experience.",
     tags: ["Brand", "E-commerce"],
     image: "https://media.contra.com/image/upload/q_auto,w_1100/lfzbmz09gzhnj32ru1wx.avif",
-    href: "https://contra.com/p/mPlEX3Br-noireve-french-luxury-beauty-and-skincare",
+    slug: "noireve-luxury-beauty",
   },
 ];
 
@@ -199,6 +199,7 @@ function Nav() {
           <a href="#how" className="hover:text-foreground transition-colors">Engagements</a>
           <a href="#certifications" className="hover:text-foreground transition-colors">Certifications</a>
           <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+          <a href="/blog" className="hover:text-foreground transition-colors">Blog</a>
         </nav>
         <div className="flex items-center gap-2 shrink-0">
           <a
@@ -237,6 +238,7 @@ function Nav() {
               { href: "#how", label: "Engagements" },
               { href: "#certifications", label: "Certifications" },
               { href: "#faq", label: "FAQ" },
+              { href: "/blog", label: "Blog" },
             ].map((l) => (
               <a
                 key={l.href}
@@ -343,9 +345,7 @@ function Work() {
           {work.map((p, i) => (
             <a
               key={p.name}
-              href={p.href}
-              target="_blank"
-              rel="noreferrer"
+              href={`/blog/${p.slug}`}
               className={`group relative overflow-hidden rounded-2xl border border-border bg-card hover:border-primary/40 transition-all duration-300 ${i === 0 ? "md:col-span-2" : ""}`}
             >
               <div className={`relative overflow-hidden ${i === 0 ? "h-80 md:h-[26rem]" : "h-56 md:h-64"}`}>
@@ -651,6 +651,7 @@ function Footer() {
           <a href="#services" className="hover:text-foreground transition-colors">Services</a>
           <a href="#certifications" className="hover:text-foreground transition-colors">Certifications</a>
           <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
+          <a href="/blog" className="hover:text-foreground transition-colors">Blog</a>
           <a
             href="https://contra.com/devowise"
             target="_blank"

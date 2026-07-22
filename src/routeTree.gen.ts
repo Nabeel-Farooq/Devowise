@@ -9,38 +9,127 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as PIdRouteImport } from './routes/p.$id'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
+import { Route as ApiPublicPdfIdInlineRouteImport } from './routes/api/public/pdf.$id.inline'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PIdRoute = PIdRouteImport.update({
+  id: '/p/$id',
+  path: '/p/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminUploadRoute = ApiAdminUploadRouteImport.update({
+  id: '/api/admin/upload',
+  path: '/api/admin/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPdfIdInlineRoute = ApiPublicPdfIdInlineRouteImport.update({
+  id: '/api/public/pdf/$id/inline',
+  path: '/api/public/pdf/$id/inline',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/p/$id': typeof PIdRoute
+  '/blog/': typeof BlogIndexRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/p/$id': typeof PIdRoute
+  '/blog': typeof BlogIndexRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/p/$id': typeof PIdRoute
+  '/blog/': typeof BlogIndexRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/blog/$slug'
+    | '/p/$id'
+    | '/blog/'
+    | '/api/admin/upload'
+    | '/api/public/pdf/$id/inline'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/blog/$slug'
+    | '/p/$id'
+    | '/blog'
+    | '/api/admin/upload'
+    | '/api/public/pdf/$id/inline'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/blog/$slug'
+    | '/p/$id'
+    | '/blog/'
+    | '/api/admin/upload'
+    | '/api/public/pdf/$id/inline'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  PIdRoute: typeof PIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  ApiAdminUploadRoute: typeof ApiAdminUploadRoute
+  ApiPublicPdfIdInlineRoute: typeof ApiPublicPdfIdInlineRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +137,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$id': {
+      id: '/p/$id'
+      path: '/p/$id'
+      fullPath: '/p/$id'
+      preLoaderRoute: typeof PIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/upload': {
+      id: '/api/admin/upload'
+      path: '/api/admin/upload'
+      fullPath: '/api/admin/upload'
+      preLoaderRoute: typeof ApiAdminUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pdf/$id/inline': {
+      id: '/api/public/pdf/$id/inline'
+      path: '/api/public/pdf/$id/inline'
+      fullPath: '/api/public/pdf/$id/inline'
+      preLoaderRoute: typeof ApiPublicPdfIdInlineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  PIdRoute: PIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  ApiAdminUploadRoute: ApiAdminUploadRoute,
+  ApiPublicPdfIdInlineRoute: ApiPublicPdfIdInlineRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
