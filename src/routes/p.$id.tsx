@@ -18,11 +18,11 @@ export const Route = createFileRoute("/p/$id")({
           });
         }
         const { name } = row as { id: string; name: string };
-        const { resolveCountry } = await import("@/lib/geo.server");
-        const country = await resolveCountry(request);
+        const { buildEventEnrichment } = await import("@/lib/tracking.server");
+        const enrichment = await buildEventEnrichment(request);
         await supabase
           .from("pdf_events" as never)
-          .insert({ pdf_id: params.id, event_type: "open", country } as never);
+          .insert({ pdf_id: params.id, event_type: "open", ...enrichment } as never);
         const escape = (s: string) =>
           s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
         const safeName = escape(name);

@@ -17,11 +17,11 @@ export const Route = createFileRoute("/api/public/pdf/$id/inline")({
           .from("portfolio-pdfs")
           .download(path);
         if (dlErr || !file) return new Response("File not found", { status: 404 });
-        const { resolveCountry } = await import("@/lib/geo.server");
-        const country = await resolveCountry(request);
+        const { buildEventEnrichment } = await import("@/lib/tracking.server");
+        const enrichment = await buildEventEnrichment(request);
         await supabase
           .from("pdf_events" as never)
-          .insert({ pdf_id: params.id, event_type: "view", country } as never);
+          .insert({ pdf_id: params.id, event_type: "view", ...enrichment } as never);
         return new Response(file.stream(), {
           headers: {
             "content-type": "application/pdf",

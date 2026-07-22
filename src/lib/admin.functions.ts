@@ -57,7 +57,42 @@ export const listPdfs = createServerFn({ method: "GET" }).handler(async (): Prom
     .select("*")
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data ?? []) as unknown as PdfRow[];
+  const rows = (data ?? []) as unknown as PdfRow[];
+  if (rows.length === 0) return rows;
+  // Compute live counters from pdf_events so numbers always match reality,
+  // even if the increment RPCs were skipped by public endpoints.
+  const ids = rows.map((r) => r.id);
+  const { data: evs, error: evErr } = await supabaseAdmin
+    .from("pdf_events" as never)
+    .select("pdf_id, event_type, created_at, is_bot")
+    .in("pdf_id", ids);
+  if (evErr) throw new Error(evErr.message);
+  const agg = new Map<string, { opens: number; views: number; last: string | null }>();
+  for (const e of (evs ?? []) as unknown as {
+    pdf_id: string;
+    event_type: "open" | "view";
+    created_at: string;
+    is_bot: boolean | null;
+  }[]) {
+    if (e.is_bot) continue;
+    const cur = agg.get(e.pdf_id) ?? { opens: 0, views: 0, last: null };
+    if (e.event_type === "open") cur.opens++;
+    else if (e.event_type === "view") {
+      cur.views++;
+      if (!cur.last || e.created_at > cur.last) cur.last = e.created_at;
+    }
+    agg.set(e.pdf_id, cur);
+  }
+  return rows.map((r) => {
+    const a = agg.get(r.id);
+    if (!a) return r;
+    return {
+      ...r,
+      link_opens: a.opens,
+      views: a.views,
+      last_viewed_at: a.last ?? r.last_viewed_at,
+    };
+  });
 });
 
 export const deletePdf = createServerFn({ method: "POST" })
@@ -85,10 +120,20 @@ export const deletePdf = createServerFn({ method: "POST" })
 
 export type BucketPoint = { bucket: string; opens: number; views: number };
 export type CountryPoint = { country: string; opens: number; views: number };
+export type CityPoint = { key: string; country: string; city: string; opens: number; views: number };
+export type BreakdownPoint = { key: string; label: string; opens: number; views: number };
 export type PdfAnalytics = {
   daily: BucketPoint[];
   weekly: BucketPoint[];
   countries: CountryPoint[];
+  cities: CityPoint[];
+  devices: BreakdownPoint[];
+  browsers: BreakdownPoint[];
+  os: BreakdownPoint[];
+  referrers: BreakdownPoint[];
+  utmSources: BreakdownPoint[];
+  utmCampaigns: BreakdownPoint[];
+  totals: { opens: number; views: number; bots: number };
 };
 
 function pad(n: number) {
@@ -108,7 +153,7 @@ function weekKey(d: Date) {
 }
 
 export const getPdfAnalytics = createServerFn({ method: "POST" })
-  .inputValidator((d: { id: string; days?: number }) => d)
+  .inputValidator((d: { id: string; days?: number; includeBots?: boolean }) => d)
   .handler(async ({ data }): Promise<PdfAnalytics> => {
     const { requireAdmin } = await import("./admin-session.server");
     await requireAdmin();
@@ -117,16 +162,27 @@ export const getPdfAnalytics = createServerFn({ method: "POST" })
     const since = new Date(Date.now() - days * 86400000);
     const { data: rows, error } = await supabaseAdmin
       .from("pdf_events" as never)
-      .select("event_type, country, created_at")
+      .select("event_type, country, city, region, device_type, browser, os, referrer_source, utm_source, utm_campaign, is_bot, created_at")
       .eq("pdf_id", data.id)
       .gte("created_at", since.toISOString())
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
-    const events = (rows ?? []) as unknown as {
+    const allEvents = (rows ?? []) as unknown as {
       event_type: "open" | "view";
       country: string | null;
+      city: string | null;
+      region: string | null;
+      device_type: string | null;
+      browser: string | null;
+      os: string | null;
+      referrer_source: string | null;
+      utm_source: string | null;
+      utm_campaign: string | null;
+      is_bot: boolean | null;
       created_at: string;
     }[];
+    const botCount = allEvents.filter((e) => e.is_bot).length;
+    const events = data.includeBots ? allEvents : allEvents.filter((e) => !e.is_bot);
 
     // Seed daily buckets so the chart shows a continuous timeline.
     const dailyMap = new Map<string, BucketPoint>();
@@ -143,6 +199,22 @@ export const getPdfAnalytics = createServerFn({ method: "POST" })
       if (!weeklyMap.has(k)) weeklyMap.set(k, { bucket: k, opens: 0, views: 0 });
     }
     const countryMap = new Map<string, CountryPoint>();
+    const cityMap = new Map<string, CityPoint>();
+    const devMap = new Map<string, BreakdownPoint>();
+    const brMap = new Map<string, BreakdownPoint>();
+    const osMap = new Map<string, BreakdownPoint>();
+    const refMap = new Map<string, BreakdownPoint>();
+    const utmSMap = new Map<string, BreakdownPoint>();
+    const utmCMap = new Map<string, BreakdownPoint>();
+    let totalOpens = 0;
+    let totalViews = 0;
+
+    const bump = (map: Map<string, BreakdownPoint>, key: string, label: string, type: "open" | "view") => {
+      const cur = map.get(key) ?? { key, label, opens: 0, views: 0 };
+      if (type === "open") cur.opens++;
+      else cur.views++;
+      map.set(key, cur);
+    };
 
     for (const e of events) {
       const d = new Date(e.created_at);
@@ -153,9 +225,11 @@ export const getPdfAnalytics = createServerFn({ method: "POST" })
       if (e.event_type === "open") {
         day.opens++;
         wk_.opens++;
+        totalOpens++;
       } else {
         day.views++;
         wk_.views++;
+        totalViews++;
       }
       dailyMap.set(dk, day);
       weeklyMap.set(wk, wk_);
@@ -164,6 +238,21 @@ export const getPdfAnalytics = createServerFn({ method: "POST" })
       if (e.event_type === "open") cp.opens++;
       else cp.views++;
       countryMap.set(c, cp);
+
+      if (e.city) {
+        const ck = `${c}::${e.city}`;
+        const cur = cityMap.get(ck) ?? { key: ck, country: c, city: e.city, opens: 0, views: 0 };
+        if (e.event_type === "open") cur.opens++;
+        else cur.views++;
+        cityMap.set(ck, cur);
+      }
+
+      bump(devMap, e.device_type || "unknown", e.device_type || "unknown", e.event_type);
+      if (e.browser) bump(brMap, e.browser, e.browser, e.event_type);
+      if (e.os) bump(osMap, e.os, e.os, e.event_type);
+      bump(refMap, e.referrer_source || "direct", e.referrer_source || "Direct", e.event_type);
+      if (e.utm_source) bump(utmSMap, e.utm_source, e.utm_source, e.event_type);
+      if (e.utm_campaign) bump(utmCMap, e.utm_campaign, e.utm_campaign, e.event_type);
     }
 
     const daily = [...dailyMap.values()].sort((a, b) => a.bucket.localeCompare(b.bucket));
@@ -171,5 +260,18 @@ export const getPdfAnalytics = createServerFn({ method: "POST" })
     const countries = [...countryMap.values()].sort(
       (a, b) => b.opens + b.views - (a.opens + a.views),
     );
-    return { daily, weekly, countries };
+    const sortByTotal = (arr: BreakdownPoint[]) => arr.sort((a, b) => b.opens + b.views - (a.opens + a.views));
+    return {
+      daily,
+      weekly,
+      countries,
+      cities: [...cityMap.values()].sort((a, b) => b.opens + b.views - (a.opens + a.views)).slice(0, 20),
+      devices: sortByTotal([...devMap.values()]),
+      browsers: sortByTotal([...brMap.values()]),
+      os: sortByTotal([...osMap.values()]),
+      referrers: sortByTotal([...refMap.values()]),
+      utmSources: sortByTotal([...utmSMap.values()]),
+      utmCampaigns: sortByTotal([...utmCMap.values()]),
+      totals: { opens: totalOpens, views: totalViews, bots: botCount },
+    };
   });

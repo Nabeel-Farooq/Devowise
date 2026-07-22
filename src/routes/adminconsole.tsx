@@ -10,6 +10,8 @@ import {
   listPdfs,
   type PdfAnalytics,
   type BucketPoint,
+  type BreakdownPoint,
+  type CityPoint,
   type PdfRow,
 } from "@/lib/admin.functions";
 import {
@@ -381,23 +383,34 @@ function AnalyticsPanel({ pdfId }: { pdfId: string }) {
   const load = useServerFn(getPdfAnalytics);
   const [data, setData] = useState<PdfAnalytics | null>(null);
   const [days, setDays] = useState(30);
+  const [includeBots, setIncludeBots] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
-    load({ data: { id: pdfId, days } })
+    load({ data: { id: pdfId, days, includeBots } })
       .then((r) => alive && setData(r))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, [pdfId, days, load]);
+  }, [pdfId, days, includeBots, load]);
 
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-medium text-neutral-200">Trends & locations</h3>
+        <div className="flex items-center gap-3">
+        <label className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+          <input
+            type="checkbox"
+            checked={includeBots}
+            onChange={(e) => setIncludeBots(e.target.checked)}
+            className="h-3 w-3 accent-emerald-400"
+          />
+          Include bots{data?.totals ? ` (${data.totals.bots})` : ""}
+        </label>
         <div className="inline-flex rounded-md border border-neutral-800 bg-neutral-900 p-0.5 text-xs">
           {[7, 30, 90].map((d) => (
             <button
@@ -409,6 +422,7 @@ function AnalyticsPanel({ pdfId }: { pdfId: string }) {
             </button>
           ))}
         </div>
+        </div>
       </div>
       {loading || !data ? (
         <div className="text-xs text-neutral-500">Loading analytics...</div>
@@ -416,49 +430,146 @@ function AnalyticsPanel({ pdfId }: { pdfId: string }) {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <BarChart title="Per day" points={data.daily} labelFormatter={fmtDay} />
           <BarChart title="Per week" points={data.weekly} labelFormatter={(s) => s} />
+          <Breakdown title="Devices" points={data.devices} />
+          <Breakdown title="Browsers" points={data.browsers} />
+          <Breakdown title="Operating systems" points={data.os} />
+          <Breakdown title="Referrers" points={data.referrers} />
+          {data.utmSources.length > 0 && <Breakdown title="UTM sources" points={data.utmSources} />}
+          {data.utmCampaigns.length > 0 && <Breakdown title="UTM campaigns" points={data.utmCampaigns} />}
+          {data.cities.length > 0 && (
+            <div className="lg:col-span-2">
+              <div className="mb-2 text-xs uppercase tracking-wider text-neutral-500">Top cities</div>
+              <div className="divide-y divide-neutral-800/70 rounded-lg border border-neutral-800 bg-neutral-900/40">
+                {data.cities.map((c) => (
+                  <div key={c.key} className="flex items-center justify-between px-4 py-2 text-sm">
+                    <span className="flex items-center gap-2 truncate">
+                      <span className="text-base leading-none">{flag(c.country)}</span>
+                      <span className="truncate text-neutral-100">{c.city}</span>
+                      <span className="text-[11px] text-neutral-500">
+                        {COUNTRY_NAMES[c.country] || c.country}
+                      </span>
+                    </span>
+                    <span className="tabular-nums text-neutral-400">
+                      {c.opens} opens · {c.views} views
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="lg:col-span-2">
-            <div className="mb-2 text-xs uppercase tracking-wider text-neutral-500">
-              By country
+            <div className="mb-3 flex items-baseline justify-between">
+              <div className="text-xs uppercase tracking-wider text-neutral-500">
+                By country
+              </div>
+              <div className="text-[10px] uppercase tracking-wider text-neutral-600">
+                {data.countries.length} {data.countries.length === 1 ? "location" : "locations"}
+              </div>
             </div>
             {data.countries.length === 0 ? (
               <div className="text-xs text-neutral-500">No traffic yet.</div>
             ) : (
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {data.countries.map((c) => {
-                  const total = c.opens + c.views;
-                  const max = Math.max(
-                    ...data.countries.map((x) => x.opens + x.views),
-                    1,
-                  );
-                  const pct = (total / max) * 100;
-                  return (
-                    <div
-                      key={c.country}
-                      className="rounded-md border border-neutral-800 bg-neutral-900/50 px-3 py-2"
-                    >
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-neutral-200">
-                          <span className="mr-2 text-base leading-none">{flag(c.country)}</span>
-                          {COUNTRY_NAMES[c.country] || (c.country === "??" ? "Unknown" : c.country)}
-                        </span>
-                        <span className="tabular-nums text-neutral-400">
-                          {c.opens} opens · {c.views} views
-                        </span>
-                      </div>
-                      <div className="mt-1.5 h-1 overflow-hidden rounded bg-neutral-800">
-                        <div
-                          className="h-full bg-neutral-400"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              (() => {
+                const max = Math.max(
+                  ...data.countries.map((x) => x.opens + x.views),
+                  1,
+                );
+                const grand = data.countries.reduce((s, c) => s + c.opens + c.views, 0) || 1;
+                return (
+                  <div className="divide-y divide-neutral-800/70 rounded-lg border border-neutral-800 bg-neutral-900/40">
+                    {data.countries.map((c, i) => {
+                      const total = c.opens + c.views;
+                      const pct = (total / max) * 100;
+                      const share = ((total / grand) * 100).toFixed(1);
+                      const opensPct = total ? (c.opens / total) * 100 : 0;
+                      return (
+                        <div key={c.country} className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <span className="w-5 text-right text-[11px] tabular-nums text-neutral-600">
+                              {i + 1}
+                            </span>
+                            <span className="text-xl leading-none">{flag(c.country)}</span>
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-medium text-neutral-100">
+                                {COUNTRY_NAMES[c.country] ||
+                                  (c.country === "??" ? "Unknown" : c.country)}
+                              </div>
+                              <div className="mt-0.5 text-[11px] text-neutral-500">
+                                {share}% of traffic
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4 text-xs tabular-nums">
+                              <span className="flex items-center gap-1.5 text-neutral-400">
+                                <span className="h-2 w-2 rounded-sm bg-neutral-500" />
+                                {c.opens}
+                              </span>
+                              <span className="flex items-center gap-1.5 text-neutral-400">
+                                <span className="h-2 w-2 rounded-sm bg-emerald-400" />
+                                {c.views}
+                              </span>
+                              <span className="w-10 text-right font-medium text-neutral-200">
+                                {total}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            className="mt-2 h-1.5 overflow-hidden rounded-full bg-neutral-800"
+                            style={{ width: `${Math.max(pct, 4)}%` }}
+                          >
+                            <div className="flex h-full">
+                              <div
+                                className="h-full bg-neutral-500"
+                                style={{ width: `${opensPct}%` }}
+                              />
+                              <div className="h-full flex-1 bg-emerald-400" />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()
             )}
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function Breakdown({ title, points }: { title: string; points: BreakdownPoint[] }) {
+  if (points.length === 0) {
+    return (
+      <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+        <div className="text-xs uppercase tracking-wider text-neutral-500">{title}</div>
+        <div className="mt-3 text-xs text-neutral-500">No data yet.</div>
+      </div>
+    );
+  }
+  const max = Math.max(...points.map((p) => p.opens + p.views), 1);
+  return (
+    <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+      <div className="text-xs uppercase tracking-wider text-neutral-500">{title}</div>
+      <div className="mt-3 space-y-2">
+        {points.slice(0, 8).map((p) => {
+          const total = p.opens + p.views;
+          const pct = (total / max) * 100;
+          return (
+            <div key={p.key}>
+              <div className="flex items-center justify-between text-xs">
+                <span className="truncate text-neutral-200">{p.label}</span>
+                <span className="tabular-nums text-neutral-400">
+                  {p.opens} · {p.views}
+                </span>
+              </div>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-800">
+                <div className="h-full bg-emerald-400/80" style={{ width: `${Math.max(pct, 3)}%` }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

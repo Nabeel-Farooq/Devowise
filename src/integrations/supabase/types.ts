@@ -79,25 +79,61 @@ export type Database = {
       }
       pdf_events: {
         Row: {
+          browser: string | null
+          city: string | null
           country: string | null
           created_at: string
+          device_type: string | null
           event_type: string
           id: number
+          is_bot: boolean
+          os: string | null
           pdf_id: string
+          referrer: string | null
+          referrer_source: string | null
+          region: string | null
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
         }
         Insert: {
+          browser?: string | null
+          city?: string | null
           country?: string | null
           created_at?: string
+          device_type?: string | null
           event_type: string
           id?: number
+          is_bot?: boolean
+          os?: string | null
           pdf_id: string
+          referrer?: string | null
+          referrer_source?: string | null
+          region?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Update: {
+          browser?: string | null
+          city?: string | null
           country?: string | null
           created_at?: string
+          device_type?: string | null
           event_type?: string
           id?: number
+          is_bot?: boolean
+          os?: string | null
           pdf_id?: string
+          referrer?: string | null
+          referrer_source?: string | null
+          region?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Relationships: [
           {
