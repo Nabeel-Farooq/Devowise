@@ -119,6 +119,37 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const isChunkError = (msg: string) =>
+      /Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|Loading chunk .* failed/i.test(
+        msg,
+      );
+    const reloadOnce = () => {
+      try {
+        const key = "__chunk_reload_ts";
+        const last = Number(sessionStorage.getItem(key) || "0");
+        if (Date.now() - last < 10_000) return;
+        sessionStorage.setItem(key, String(Date.now()));
+        window.location.reload();
+      } catch {
+        window.location.reload();
+      }
+    };
+    const onError = (e: ErrorEvent) => {
+      if (e?.message && isChunkError(e.message)) reloadOnce();
+    };
+    const onRejection = (e: PromiseRejectionEvent) => {
+      const msg = String((e?.reason && (e.reason.message || e.reason)) || "");
+      if (isChunkError(msg)) reloadOnce();
+    };
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsDw9f2a7cRouteImport } from './routes/stats-dw-9f2a7c'
 import { Route as AdminconsoleRouteImport } from './routes/adminconsole'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -17,6 +18,11 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
 import { Route as ApiPublicPdfIdInlineRouteImport } from './routes/api/public/pdf.$id.inline'
 
+const StatsDw9f2a7cRoute = StatsDw9f2a7cRouteImport.update({
+  id: '/stats-dw-9f2a7c',
+  path: '/stats-dw-9f2a7c',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminconsoleRoute = AdminconsoleRouteImport.update({
   id: '/adminconsole',
   path: '/adminconsole',
@@ -56,6 +62,7 @@ const ApiPublicPdfIdInlineRoute = ApiPublicPdfIdInlineRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog/': typeof BlogIndexRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog': typeof BlogIndexRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog/': typeof BlogIndexRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/adminconsole'
+    | '/stats-dw-9f2a7c'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog/'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/adminconsole'
+    | '/stats-dw-9f2a7c'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/adminconsole'
+    | '/stats-dw-9f2a7c'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog/'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminconsoleRoute: typeof AdminconsoleRoute
+  StatsDw9f2a7cRoute: typeof StatsDw9f2a7cRoute
   BlogSlugRoute: typeof BlogSlugRoute
   PIdRoute: typeof PIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats-dw-9f2a7c': {
+      id: '/stats-dw-9f2a7c'
+      path: '/stats-dw-9f2a7c'
+      fullPath: '/stats-dw-9f2a7c'
+      preLoaderRoute: typeof StatsDw9f2a7cRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/adminconsole': {
       id: '/adminconsole'
       path: '/adminconsole'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminconsoleRoute: AdminconsoleRoute,
+  StatsDw9f2a7cRoute: StatsDw9f2a7cRoute,
   BlogSlugRoute: BlogSlugRoute,
   PIdRoute: PIdRoute,
   BlogIndexRoute: BlogIndexRoute,
