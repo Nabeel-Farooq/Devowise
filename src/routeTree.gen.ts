@@ -9,7 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminconsoleRouteImport } from './routes/adminconsole'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as PIdRouteImport } from './routes/p.$id'
@@ -17,9 +17,9 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
 import { Route as ApiPublicPdfIdInlineRouteImport } from './routes/api/public/pdf.$id.inline'
 
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AdminconsoleRoute = AdminconsoleRouteImport.update({
+  id: '/adminconsole',
+  path: '/adminconsole',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -55,7 +55,7 @@ const ApiPublicPdfIdInlineRoute = ApiPublicPdfIdInlineRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/adminconsole': typeof AdminconsoleRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog/': typeof BlogIndexRoute
@@ -64,7 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/adminconsole': typeof AdminconsoleRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog': typeof BlogIndexRoute
@@ -74,7 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/adminconsole': typeof AdminconsoleRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/p/$id': typeof PIdRoute
   '/blog/': typeof BlogIndexRoute
@@ -85,7 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
+    | '/adminconsole'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog/'
@@ -94,7 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
+    | '/adminconsole'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog'
@@ -103,7 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
+    | '/adminconsole'
     | '/blog/$slug'
     | '/p/$id'
     | '/blog/'
@@ -113,7 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminconsoleRoute: typeof AdminconsoleRoute
   BlogSlugRoute: typeof BlogSlugRoute
   PIdRoute: typeof PIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -123,11 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/adminconsole': {
+      id: '/adminconsole'
+      path: '/adminconsole'
+      fullPath: '/adminconsole'
+      preLoaderRoute: typeof AdminconsoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -177,7 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminconsoleRoute: AdminconsoleRoute,
   BlogSlugRoute: BlogSlugRoute,
   PIdRoute: PIdRoute,
   BlogIndexRoute: BlogIndexRoute,

@@ -17,11 +17,8 @@ export const Route = createFileRoute("/p/$id")({
           });
         }
         const { name } = row as { id: string; name: string };
-        const country =
-          request.headers.get("cf-ipcountry") ||
-          request.headers.get("x-vercel-ip-country") ||
-          request.headers.get("x-country-code") ||
-          null;
+        const { resolveCountry } = await import("@/lib/geo.server");
+        const country = await resolveCountry(request);
         await Promise.all([
           supabaseAdmin.rpc("increment_pdf_open" as never, { _id: params.id } as never),
           supabaseAdmin

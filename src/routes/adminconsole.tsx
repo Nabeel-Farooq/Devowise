@@ -20,7 +20,7 @@ import {
   type BlogPostInput,
 } from "@/lib/blog.functions";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/adminconsole")({
   head: () => ({
     meta: [
       { title: "Admin" },
