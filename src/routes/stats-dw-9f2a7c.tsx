@@ -51,8 +51,31 @@ function StatsPage() {
         setErr(e1?.message || e2?.message || "Failed to load");
         return;
       }
-      setPdfs((p as Pdf[]) || []);
-      setEvents((ev as Ev[]) || []);
+      const evs = (ev as Ev[]) || [];
+      // Derive live counters from pdf_events so numbers match reality even
+      // when the pdf_files counters are stale on production.
+      const agg = new Map<string, { opens: number; views: number; last: string | null }>();
+      for (const e of evs) {
+        const cur = agg.get(e.pdf_id) ?? { opens: 0, views: 0, last: null };
+        if (e.event_type === "open") cur.opens++;
+        else if (e.event_type === "view") {
+          cur.views++;
+          if (!cur.last || e.created_at > cur.last) cur.last = e.created_at;
+        }
+        agg.set(e.pdf_id, cur);
+      }
+      const merged = ((p as Pdf[]) || []).map((row) => {
+        const a = agg.get(row.id);
+        if (!a) return row;
+        return {
+          ...row,
+          link_opens: a.opens,
+          views: a.views,
+          last_viewed_at: a.last ?? row.last_viewed_at,
+        };
+      });
+      setPdfs(merged);
+      setEvents(evs);
     })();
   }, []);
 
@@ -165,6 +188,18 @@ function PdfCard({
   open: boolean;
   onToggle: () => void;
 }) {
+  const shareUrl = `https://www.devowise.com/p/${pdf.id}`;
+  const [copied, setCopied] = useState(false);
+  const copy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
   const daily = useMemo(() => bucketBy(events, 14, "day"), [events]);
   const weekly = useMemo(() => bucketBy(events, 12, "week"), [events]);
   const countries = useMemo(() => {
@@ -196,6 +231,24 @@ function PdfCard({
         </div>
         <span className="ml-4 text-neutral-500">{open ? "−" : "+"}</span>
       </button>
+
+      <div className="flex items-center gap-2 border-t border-neutral-800 px-4 py-2">
+        <a
+          href={shareUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="min-w-0 flex-1 truncate text-xs text-neutral-400 hover:text-neutral-200"
+        >
+          {shareUrl}
+        </a>
+        <button
+          onClick={copy}
+          className="shrink-0 rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-[10px] uppercase tracking-wider text-neutral-300 hover:bg-neutral-800"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
 
       {open && (
         <div className="border-t border-neutral-800 p-4 space-y-6">
