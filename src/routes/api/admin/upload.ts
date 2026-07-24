@@ -20,6 +20,24 @@ export const Route = createFileRoute("/api/admin/upload")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const key = `${crypto.randomUUID()}-${safeName}`;
+        // Build a URL-friendly slug from the filename (without .pdf).
+        const baseSlug = file.name
+          .replace(/\.pdf$/i, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          || "file";
+        // Ensure uniqueness against existing slugs.
+        let slug = baseSlug;
+        for (let i = 0; i < 5; i++) {
+          const { data: existing } = await supabaseAdmin
+            .from("pdf_files" as never)
+            .select("id")
+            .eq("slug", slug)
+            .maybeSingle();
+          if (!existing) break;
+          slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`;
+        }
         const buffer = new Uint8Array(await file.arrayBuffer());
         const { error: upErr } = await supabaseAdmin.storage
           .from("portfolio-pdfs")
@@ -34,6 +52,7 @@ export const Route = createFileRoute("/api/admin/upload")({
             name: file.name,
             storage_path: key,
             size_bytes: file.size,
+            slug,
           } as never);
         if (insErr) {
           await supabaseAdmin.storage.from("portfolio-pdfs").remove([key]);

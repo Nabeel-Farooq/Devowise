@@ -163,8 +163,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     await refresh();
   }
 
-  async function copyLink(id: string) {
-    const url = `${origin}/p/${id}`;
+  async function copyLink(id: string, slug: string | null) {
+    const path = slug ? `/p/${slug}.pdf` : `/p/${id}`;
+    const url = `${origin}${path}`;
     try {
       await navigator.clipboard.writeText(url);
       setCopiedId(id);
@@ -291,7 +292,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     <tr className="border-t border-neutral-800/60">
                       <td className="max-w-[280px] truncate px-6 py-3">
                         <a
-                          href={`/p/${r.id}`}
+                          href={r.slug ? `/p/${r.slug}.pdf` : `/p/${r.id}`}
                           target="_blank"
                           rel="noreferrer"
                           className="text-neutral-100 hover:underline"
@@ -316,7 +317,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                             {expanded === r.id ? "Hide analytics" : "Analytics"}
                           </button>
                           <button
-                            onClick={() => copyLink(r.id)}
+                            onClick={() => copyLink(r.id, r.slug)}
                             className="rounded-md border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-xs hover:bg-neutral-800"
                           >
                             {copiedId === r.id ? "Copied" : "Copy link"}

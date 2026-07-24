@@ -15,6 +15,7 @@ export const Route = createFileRoute("/stats-dw-9f2a7c")({
 type Pdf = {
   id: string;
   name: string;
+  slug: string | null;
   views: number;
   link_opens: number;
   last_viewed_at: string | null;
@@ -39,7 +40,7 @@ function StatsPage() {
       const [{ data: p, error: e1 }, { data: ev, error: e2 }] = await Promise.all([
         supabase
           .from("pdf_files")
-          .select("id,name,views,link_opens,last_viewed_at,created_at")
+          .select("id,name,slug,views,link_opens,last_viewed_at,created_at")
           .order("created_at", { ascending: false }),
         supabase
           .from("pdf_events")
@@ -188,7 +189,7 @@ function PdfCard({
   open: boolean;
   onToggle: () => void;
 }) {
-  const shareUrl = `https://www.devowise.com/p/${pdf.id}`;
+  const shareUrl = `https://www.devowise.com/p/${pdf.slug ? `${pdf.slug}.pdf` : pdf.id}`;
   const [copied, setCopied] = useState(false);
   const copy = async (e: React.MouseEvent) => {
     e.stopPropagation();

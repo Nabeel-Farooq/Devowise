@@ -40,6 +40,7 @@ export const checkAdminSession = createServerFn({ method: "GET" }).handler(async
 export type PdfRow = {
   id: string;
   name: string;
+  slug: string | null;
   storage_path: string;
   size_bytes: number | null;
   link_opens: number;

@@ -153,6 +153,7 @@ export type Database = {
           link_opens: number
           name: string
           size_bytes: number | null
+          slug: string | null
           storage_path: string
           views: number
         }
@@ -163,6 +164,7 @@ export type Database = {
           link_opens?: number
           name: string
           size_bytes?: number | null
+          slug?: string | null
           storage_path: string
           views?: number
         }
@@ -173,6 +175,7 @@ export type Database = {
           link_opens?: number
           name?: string
           size_bytes?: number | null
+          slug?: string | null
           storage_path?: string
           views?: number
         }
