@@ -8,11 +8,11 @@ export const Route = createFileRoute("/api/public/pdf/$id/inline")({
         const supabase = createSupabasePublicClient();
         const { data: row, error } = await supabase
           .from("pdf_files" as never)
-          .select("storage_path")
+          .select("storage_path, name")
           .eq("id", params.id)
           .maybeSingle();
         if (error || !row) return new Response("Not found", { status: 404 });
-        const path = (row as { storage_path: string }).storage_path;
+        const { storage_path: path, name } = row as { storage_path: string; name: string };
         const { data: file, error: dlErr } = await supabase.storage
           .from("portfolio-pdfs")
           .download(path);
@@ -22,11 +22,19 @@ export const Route = createFileRoute("/api/public/pdf/$id/inline")({
         await supabase
           .from("pdf_events" as never)
           .insert({ pdf_id: params.id, event_type: "view", ...enrichment } as never);
-        return new Response(file.stream(), {
+        // Buffer the file so we can send Content-Length — mobile PDF viewers
+        // (Chrome Android in particular) reject streamed responses without a
+        // known length as "invalid format".
+        const buffer = await file.arrayBuffer();
+        const safeName = (name || "document").replace(/[^\w.\-]+/g, "_").replace(/\.pdf$/i, "") + ".pdf";
+        return new Response(buffer, {
           headers: {
             "content-type": "application/pdf",
-            "content-disposition": "inline",
+            "content-length": String(buffer.byteLength),
+            "content-disposition": `inline; filename="${safeName}"`,
+            "accept-ranges": "bytes",
             "cache-control": "private, max-age=300",
+            "x-content-type-options": "nosniff",
           },
         });
       },
