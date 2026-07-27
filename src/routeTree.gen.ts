@@ -10,17 +10,35 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StatsDw9f2a7cRouteImport } from './routes/stats-dw-9f2a7c'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminconsoleRouteImport } from './routes/adminconsole'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SolutionsIndexRouteImport } from './routes/solutions.index'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as ResourcesIndexRouteImport } from './routes/resources.index'
+import { Route as PlatformsIndexRouteImport } from './routes/platforms.index'
+import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
+import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as SolutionsSlugRouteImport } from './routes/solutions.$slug'
+import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as ResourcesSlugRouteImport } from './routes/resources.$slug'
+import { Route as PlatformsSlugRouteImport } from './routes/platforms.$slug'
 import { Route as PIdRouteImport } from './routes/p.$id'
+import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$slug'
 import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
 import { Route as ApiPublicPdfIdInlineRouteImport } from './routes/api/public/pdf.$id.inline'
 
 const StatsDw9f2a7cRoute = StatsDw9f2a7cRouteImport.update({
   id: '/stats-dw-9f2a7c',
   path: '/stats-dw-9f2a7c',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminconsoleRoute = AdminconsoleRouteImport.update({
@@ -33,9 +51,59 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolutionsIndexRoute = SolutionsIndexRouteImport.update({
+  id: '/solutions/',
+  path: '/solutions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
+  id: '/resources/',
+  path: '/resources/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlatformsIndexRoute = PlatformsIndexRouteImport.update({
+  id: '/platforms/',
+  path: '/platforms/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
+  id: '/industries/',
+  path: '/industries/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaseStudiesIndexRoute = CaseStudiesIndexRouteImport.update({
+  id: '/case-studies/',
+  path: '/case-studies/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsSlugRoute = SolutionsSlugRouteImport.update({
+  id: '/solutions/$slug',
+  path: '/solutions/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesSlugRoute = ServicesSlugRouteImport.update({
+  id: '/services/$slug',
+  path: '/services/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
+  id: '/resources/$slug',
+  path: '/resources/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlatformsSlugRoute = PlatformsSlugRouteImport.update({
+  id: '/platforms/$slug',
+  path: '/platforms/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PIdRoute = PIdRouteImport.update({
@@ -43,9 +111,19 @@ const PIdRoute = PIdRouteImport.update({
   path: '/p/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
+  id: '/industries/$slug',
+  path: '/industries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogCategorySlugRoute = BlogCategorySlugRouteImport.update({
+  id: '/blog/category/$slug',
+  path: '/blog/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminUploadRoute = ApiAdminUploadRouteImport.update({
@@ -62,32 +140,71 @@ const ApiPublicPdfIdInlineRoute = ApiPublicPdfIdInlineRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/p/$id': typeof PIdRoute
+  '/platforms/$slug': typeof PlatformsSlugRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
+  '/solutions/$slug': typeof SolutionsSlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
+  '/platforms/': typeof PlatformsIndexRoute
+  '/resources/': typeof ResourcesIndexRoute
+  '/services/': typeof ServicesIndexRoute
+  '/solutions/': typeof SolutionsIndexRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/p/$id': typeof PIdRoute
+  '/platforms/$slug': typeof PlatformsSlugRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
+  '/solutions/$slug': typeof SolutionsSlugRoute
   '/blog': typeof BlogIndexRoute
+  '/case-studies': typeof CaseStudiesIndexRoute
+  '/industries': typeof IndustriesIndexRoute
+  '/platforms': typeof PlatformsIndexRoute
+  '/resources': typeof ResourcesIndexRoute
+  '/services': typeof ServicesIndexRoute
+  '/solutions': typeof SolutionsIndexRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/adminconsole': typeof AdminconsoleRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stats-dw-9f2a7c': typeof StatsDw9f2a7cRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/p/$id': typeof PIdRoute
+  '/platforms/$slug': typeof PlatformsSlugRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
+  '/solutions/$slug': typeof SolutionsSlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
+  '/platforms/': typeof PlatformsIndexRoute
+  '/resources/': typeof ResourcesIndexRoute
+  '/services/': typeof ServicesIndexRoute
+  '/solutions/': typeof SolutionsIndexRoute
   '/api/admin/upload': typeof ApiAdminUploadRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/api/public/pdf/$id/inline': typeof ApiPublicPdfIdInlineRoute
 }
 export interface FileRouteTypes {
@@ -95,42 +212,94 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/adminconsole'
+    | '/sitemap.xml'
     | '/stats-dw-9f2a7c'
     | '/blog/$slug'
+    | '/industries/$slug'
     | '/p/$id'
+    | '/platforms/$slug'
+    | '/resources/$slug'
+    | '/services/$slug'
+    | '/solutions/$slug'
     | '/blog/'
+    | '/case-studies/'
+    | '/industries/'
+    | '/platforms/'
+    | '/resources/'
+    | '/services/'
+    | '/solutions/'
     | '/api/admin/upload'
+    | '/blog/category/$slug'
     | '/api/public/pdf/$id/inline'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/adminconsole'
+    | '/sitemap.xml'
     | '/stats-dw-9f2a7c'
     | '/blog/$slug'
+    | '/industries/$slug'
     | '/p/$id'
+    | '/platforms/$slug'
+    | '/resources/$slug'
+    | '/services/$slug'
+    | '/solutions/$slug'
     | '/blog'
+    | '/case-studies'
+    | '/industries'
+    | '/platforms'
+    | '/resources'
+    | '/services'
+    | '/solutions'
     | '/api/admin/upload'
+    | '/blog/category/$slug'
     | '/api/public/pdf/$id/inline'
   id:
     | '__root__'
     | '/'
     | '/adminconsole'
+    | '/sitemap.xml'
     | '/stats-dw-9f2a7c'
     | '/blog/$slug'
+    | '/industries/$slug'
     | '/p/$id'
+    | '/platforms/$slug'
+    | '/resources/$slug'
+    | '/services/$slug'
+    | '/solutions/$slug'
     | '/blog/'
+    | '/case-studies/'
+    | '/industries/'
+    | '/platforms/'
+    | '/resources/'
+    | '/services/'
+    | '/solutions/'
     | '/api/admin/upload'
+    | '/blog/category/$slug'
     | '/api/public/pdf/$id/inline'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminconsoleRoute: typeof AdminconsoleRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatsDw9f2a7cRoute: typeof StatsDw9f2a7cRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  IndustriesSlugRoute: typeof IndustriesSlugRoute
   PIdRoute: typeof PIdRoute
+  PlatformsSlugRoute: typeof PlatformsSlugRoute
+  ResourcesSlugRoute: typeof ResourcesSlugRoute
+  ServicesSlugRoute: typeof ServicesSlugRoute
+  SolutionsSlugRoute: typeof SolutionsSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  CaseStudiesIndexRoute: typeof CaseStudiesIndexRoute
+  IndustriesIndexRoute: typeof IndustriesIndexRoute
+  PlatformsIndexRoute: typeof PlatformsIndexRoute
+  ResourcesIndexRoute: typeof ResourcesIndexRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
+  SolutionsIndexRoute: typeof SolutionsIndexRoute
   ApiAdminUploadRoute: typeof ApiAdminUploadRoute
+  BlogCategorySlugRoute: typeof BlogCategorySlugRoute
   ApiPublicPdfIdInlineRoute: typeof ApiPublicPdfIdInlineRoute
 }
 
@@ -141,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/stats-dw-9f2a7c'
       fullPath: '/stats-dw-9f2a7c'
       preLoaderRoute: typeof StatsDw9f2a7cRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/adminconsole': {
@@ -157,11 +333,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/solutions/': {
+      id: '/solutions/'
+      path: '/solutions'
+      fullPath: '/solutions/'
+      preLoaderRoute: typeof SolutionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources/': {
+      id: '/resources/'
+      path: '/resources'
+      fullPath: '/resources/'
+      preLoaderRoute: typeof ResourcesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/platforms/': {
+      id: '/platforms/'
+      path: '/platforms'
+      fullPath: '/platforms/'
+      preLoaderRoute: typeof PlatformsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/industries/': {
+      id: '/industries/'
+      path: '/industries'
+      fullPath: '/industries/'
+      preLoaderRoute: typeof IndustriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-studies/': {
+      id: '/case-studies/'
+      path: '/case-studies'
+      fullPath: '/case-studies/'
+      preLoaderRoute: typeof CaseStudiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions/$slug': {
+      id: '/solutions/$slug'
+      path: '/solutions/$slug'
+      fullPath: '/solutions/$slug'
+      preLoaderRoute: typeof SolutionsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/$slug': {
+      id: '/services/$slug'
+      path: '/services/$slug'
+      fullPath: '/services/$slug'
+      preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources/$slug': {
+      id: '/resources/$slug'
+      path: '/resources/$slug'
+      fullPath: '/resources/$slug'
+      preLoaderRoute: typeof ResourcesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/platforms/$slug': {
+      id: '/platforms/$slug'
+      path: '/platforms/$slug'
+      fullPath: '/platforms/$slug'
+      preLoaderRoute: typeof PlatformsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$id': {
@@ -171,11 +417,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/industries/$slug': {
+      id: '/industries/$slug'
+      path: '/industries/$slug'
+      fullPath: '/industries/$slug'
+      preLoaderRoute: typeof IndustriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/category/$slug': {
+      id: '/blog/category/$slug'
+      path: '/blog/category/$slug'
+      fullPath: '/blog/category/$slug'
+      preLoaderRoute: typeof BlogCategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/upload': {
@@ -198,11 +458,24 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminconsoleRoute: AdminconsoleRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatsDw9f2a7cRoute: StatsDw9f2a7cRoute,
   BlogSlugRoute: BlogSlugRoute,
+  IndustriesSlugRoute: IndustriesSlugRoute,
   PIdRoute: PIdRoute,
+  PlatformsSlugRoute: PlatformsSlugRoute,
+  ResourcesSlugRoute: ResourcesSlugRoute,
+  ServicesSlugRoute: ServicesSlugRoute,
+  SolutionsSlugRoute: SolutionsSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
+  CaseStudiesIndexRoute: CaseStudiesIndexRoute,
+  IndustriesIndexRoute: IndustriesIndexRoute,
+  PlatformsIndexRoute: PlatformsIndexRoute,
+  ResourcesIndexRoute: ResourcesIndexRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
+  SolutionsIndexRoute: SolutionsIndexRoute,
   ApiAdminUploadRoute: ApiAdminUploadRoute,
+  BlogCategorySlugRoute: BlogCategorySlugRoute,
   ApiPublicPdfIdInlineRoute: ApiPublicPdfIdInlineRoute,
 }
 export const routeTree = rootRouteImport

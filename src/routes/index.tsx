@@ -2,6 +2,64 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Sparkles, Layers, Zap, Cpu, PenTool, Globe, Linkedin, Plus, Clock, Handshake, Rocket, Menu, X } from "lucide-react";
 import { useState } from "react";
 import devowiseLogo from "@/assets/devowise-logo.png";
+import { services as allServices } from "@/content/services";
+import { platforms } from "@/content/platforms";
+import { industries } from "@/content/industries";
+import { solutions } from "@/content/solutions";
+import { resources } from "@/content/resources";
+import { blogCategories } from "@/content/categories";
+
+function SiteDirectory() {
+  const groups: { title: string; base: string; items: { label: string; slug: string }[]; hub: string }[] = [
+    { title: "Services", hub: "/services", base: "/services", items: allServices.map((s) => ({ label: s.h1, slug: s.slug })) },
+    { title: "Platforms", hub: "/platforms", base: "/platforms", items: platforms.map((p) => ({ label: p.h1, slug: p.slug })) },
+    { title: "Industries", hub: "/industries", base: "/industries", items: industries.map((i) => ({ label: i.eyebrow, slug: i.slug })) },
+    { title: "Solutions", hub: "/solutions", base: "/solutions", items: solutions.map((s) => ({ label: s.h1, slug: s.slug })) },
+    { title: "Resources", hub: "/resources", base: "/resources", items: resources.map((r) => ({ label: r.h1, slug: r.slug })) },
+    { title: "Blog Categories", hub: "/blog", base: "/blog/category", items: blogCategories.map((c) => ({ label: c.name, slug: c.slug })) },
+  ];
+  return (
+    <section className="py-24 border-t border-border">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">Explore Devowise</div>
+            <h2 className="text-3xl md:text-5xl font-semibold tracking-tight max-w-2xl">Every service, platform, industry, and guide.</h2>
+          </div>
+          <p className="text-sm text-muted-foreground max-w-md">A full directory of what we do and who we build for. Jump straight to a page.</p>
+        </div>
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+          {groups.map((g) => (
+            <div key={g.title} className="rounded-2xl border border-border bg-background/40 backdrop-blur-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">{g.title}</div>
+                <a href={g.hub} className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">All <ArrowUpRight className="h-3 w-3" /></a>
+              </div>
+              <ul className="flex flex-col gap-1.5">
+                {g.items.map((it) => (
+                  <li key={it.slug}>
+                    <a href={`${g.base}/${it.slug}`} className="text-sm text-foreground/80 hover:text-foreground block truncate">
+                      {it.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <a href="/case-studies" className="hover:text-foreground">Case Studies</a>
+          <a href="/blog" className="hover:text-foreground">Blog</a>
+          <a href="/services" className="hover:text-foreground">All Services</a>
+          <a href="/platforms" className="hover:text-foreground">All Platforms</a>
+          <a href="/industries" className="hover:text-foreground">All Industries</a>
+          <a href="/solutions" className="hover:text-foreground">All Solutions</a>
+          <a href="/resources" className="hover:text-foreground">All Resources</a>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const CALENDLY_URL = "https://calendly.com/nabeelfarooq1515/30min";
 
@@ -699,6 +757,7 @@ function Index() {
         <HowWeWork />
         <About />
         <FAQ />
+        <SiteDirectory />
         <CTA />
       </main>
       <Footer />
